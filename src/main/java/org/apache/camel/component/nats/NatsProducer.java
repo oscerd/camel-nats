@@ -6,8 +6,12 @@ import java.util.Properties;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.nats.Connection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NatsProducer extends DefaultProducer {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(NatsProducer.class);
     
     private Connection connection;
     
@@ -23,20 +27,28 @@ public class NatsProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         NatsConfiguration config = getEndpoint().getNatsConfiguration();
-        connection.publish(config.getTopic(), exchange.getIn().getBody(String.class));
+        connection.publish(config.getTopic(), exchange.getIn().getBody(String.class).getBytes());
     }
     
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        LOG.debug("Starting Nats Producer");
+        
+        LOG.debug("Getting Nats Connection");
         connection = getConnection();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        connection.close();
+        LOG.debug("Stopping Nats Producer");
+        
+        LOG.debug("Closing Nats Connection");
+        if (connection.isConnected()) {
+            connection.close();
+        }
     }
 
     

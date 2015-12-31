@@ -36,10 +36,10 @@ public class NatsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.info("Starting Nats Consumer");
+        LOG.debug("Starting Nats Consumer");
         executor = endpoint.createExecutor();
 
-        LOG.info("Getting Nats Connection");
+        LOG.debug("Getting Nats Connection");
         connection = getConnection();
 
         executor.submit(new NatsConsumingTask(connection, getEndpoint().getNatsConfiguration()));
@@ -49,7 +49,7 @@ public class NatsConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        LOG.info("Stopping Nats Consumer");
+        LOG.debug("Stopping Nats Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
@@ -59,8 +59,8 @@ public class NatsConsumer extends DefaultConsumer {
         }
         executor = null;
         
-        LOG.info("Closing Nats Connection");
-        if (connection != null) {
+        LOG.debug("Closing Nats Connection");
+        if (connection.isConnected()) {
             connection.close();   
         }
     }
@@ -89,12 +89,13 @@ public class NatsConsumer extends DefaultConsumer {
             try {
                 sid = connection.subscribe(getEndpoint().getNatsConfiguration().getTopic(), configuration.createSubProperties(), new MsgHandler() {
                     public void execute(String msg) {
+                        LOG.debug("Received Message: " + msg);
                         Exchange exchange = getEndpoint().createExchange();
                         exchange.getIn().setBody(msg);
                         exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
                         exchange.getIn().setHeader(NatsConstants.NATS_SUBSCRIBE_SID, sid);
                         try {
-                            getProcessor().process(exchange);
+                            processor.process(exchange);
                         } catch (Exception e) {
                             getExceptionHandler().handleException("Error during processing", exchange, e);
                         }

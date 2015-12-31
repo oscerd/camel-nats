@@ -30,6 +30,8 @@ public class NatsConfiguration {
     private String queueName;
     @UriParam(label = "consumer")
     private String maxMessages;
+    @UriParam(label = "consumer", defaultValue = "10")
+    private int poolSize = 10;
     
     public String getServers() {
         return servers;
@@ -102,6 +104,12 @@ public class NatsConfiguration {
     }
     public void setMaxMessages(String maxMessages) {
         this.maxMessages = maxMessages;
+    }        
+    public int getPoolSize() {
+        return poolSize;
+    }
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
     }
     private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
         if (value != null) {
