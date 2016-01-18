@@ -22,10 +22,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriEndpoint(scheme = "nats", title = "Nats", syntax = "nats:host", label = "messaging")
 public class NatsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(NatsEndpoint.class);
