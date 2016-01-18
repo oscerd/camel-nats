@@ -18,8 +18,10 @@ package org.apache.camel.component.nats;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Require a running Nats server")
 public class NatsProducerTest extends CamelTestSupport {
     
     @Test

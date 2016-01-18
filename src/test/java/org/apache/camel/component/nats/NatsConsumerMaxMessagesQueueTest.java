@@ -22,8 +22,10 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Require a running Nats server")
 public class NatsConsumerMaxMessagesQueueTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
